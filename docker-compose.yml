@@ -1,0 +1,33 @@
+version: '3.9'
+
+networks:
+  frontend:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+services:
+  apache2:
+    container_name: iriusweb
+    image: ubuntu/apache2:latest
+    networks:
+      frontend:
+        ipv4_address: 172.30.0.10
+    volumes:
+        - ./php/www:/var/www/html
+    ports:
+        - 8080:80
+
+  postgres:
+    container_name: iriusprod
+    image: ubuntu/postgres:latest
+    networks:
+      frontend:
+        ipv4_address: 172.30.0.11
+    environment:
+      - POSTGRES_USER=iriusprod
+      - POSTGRES_PASSWORD=iriusprod
+    ports:
+      - '5432'
+    volumes: 
+      - ./postgres-data:/var/lib/postgresql/data
