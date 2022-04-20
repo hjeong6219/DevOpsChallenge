@@ -1,0 +1,28 @@
+- name: Setup staging boxes
+  hosts: staging
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Check for bin folder in user directory
+      path: ~/bin
+      register: bin_folder
+    - name: Create bin folder in user directory if it doesnt already exist
+      file:
+      path: ~/bin
+      state: directory
+      mode: 0755
+      group: root
+      owner: root
+      when: bin_folder.stat.exists == false
+    - name: Copy script files into user home and bin directory
+      shell: docker cp agent_files/.bashrc agent_files/x.sh hosts:~/
+    - name: Copy script files into user home and bin directory
+      shell: docker cp agent_files/.bashrc agent_files/x.sh hosts:~/bin
+    - name: Create cronjob for script x.sh for the root user
+      cron:
+        name: "run script x.sh"
+        user: "root"
+        minute: "15"
+        hour: "15"
+        weekday: "*"
+        job: "~/x.sh"

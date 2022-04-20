@@ -1,0 +1,3 @@
+---
+- ansible.builtin.import_playbook: system_update.yml
+- ansible.builtin.import_playbook: staging_setup.yml
